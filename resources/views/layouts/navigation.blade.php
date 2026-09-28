@@ -19,6 +19,11 @@
                         {{ __('Aprendices') }}
                     </x-nav-link>
 
+                    <!-- ENLACE PARA GESTIONAR USUARIOS Y ADMINISTRADORES -->
+                    <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
+                    {{ __('Usuarios / Accesos') }}
+                    </x-nav-link>
+
                     <!-- Opción visible solo para Administradores -->
                     @can('manage-users')
                         <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">

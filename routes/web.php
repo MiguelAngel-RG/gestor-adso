@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AprendizController;    
+use App\Http\Controllers\UserController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -19,8 +20,8 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('aprendizes', AprendizController::class);
 
-    Route::middleware('can:manage-users')->group(function () {
-        Route::resource('users', UserController::class)->except(['create', 'store', 'show']);
-});
+    Route::resource('users', UserController::class);
+
+    
 });
 require __DIR__.'/auth.php';

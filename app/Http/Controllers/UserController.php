@@ -2,7 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
@@ -12,6 +16,35 @@ class UserController extends Controller
 
         $users = User::paginate(10);
         return view('users.index', compact('users'));
+    }
+
+    public function create()
+    {
+        Gate::authorize('manage-users');
+
+        return view('users.create');
+    }
+
+    public function store(Request $request)
+    {
+        Gate::authorize('manage-users');
+
+        $request->validate([
+            'name'     => ['required', 'string', 'max:255'],
+            'email'    => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'role'     => ['required', Rule::in(['admin', 'instructor', 'aprendiz'])],
+        ]);
+
+        User::create([
+            'name'     => $request->name,
+            'email'    => $request->email,
+            'password' => Hash::make($request->password),
+            'role'     => $request->role,
+        ]);
+
+        return redirect()->route('users.index')
+            ->with('success', 'Usuario creado correctamente.');
     }
 
     public function edit(User $user)
