@@ -18,6 +18,13 @@
                     <x-nav-link :href="route('aprendizes.index')" :active="request()->routeIs('aprendizes.*')">
                         {{ __('Aprendices') }}
                     </x-nav-link>
+
+                    <!-- Opción visible solo para Administradores -->
+                    @can('manage-users')
+                        <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
+                            {{ __('Usuarios') }}
+                        </x-nav-link>
+                    @endcan
                 </div>
             </div>
 
@@ -76,6 +83,12 @@
             <x-responsive-nav-link :href="route('aprendizes.index')" :active="request()->routeIs('aprendizes.*')">
                 {{ __('Aprendices') }}
             </x-responsive-nav-link>
+
+            @can('manage-users')
+                <x-responsive-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
+                    {{ __('Usuarios') }}
+                </x-responsive-nav-link>
+            @endcan
         </div>
 
         <!-- Responsive Settings Options -->

@@ -40,24 +40,28 @@ class AprendizController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Aprendiz $aprendiz)
+    public function show(Aprendiz $aprendize)
     {
-        return view('aprendizes.show', compact('aprendiz'));
+        return view('aprendizes.show', ['aprendiz' => $aprendize]);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Aprendiz $aprendiz)
+    public function edit(Aprendiz $aprendize)
     {
-        return view('aprendizes.edit', compact('aprendiz'));
+        return view('aprendizes.edit', ['aprendiz' => $aprendize]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateAprendizRequest $request, Aprendiz $aprendiz)
+    public function update(UpdateAprendizRequest $request, Aprendiz $aprendize)
     {
+        // 1. Ejecutamos la actualización de datos validados
+        $aprendize->update($request->validated());
+
+        // 2. Redireccionamos con mensaje de éxito
         return redirect()->route('aprendizes.index')
             ->with('success', 'Información del aprendiz actualizada correctamente.');
     }
@@ -65,9 +69,9 @@ class AprendizController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Aprendiz $aprendiz)
+    public function destroy(Aprendiz $aprendize)
     {
-        $aprendiz->delete();
+        $aprendize->delete();
 
         return redirect()->route('aprendizes.index')
             ->with('success', 'Aprendiz eliminado correctamente.');

@@ -10,28 +10,28 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
-        // Administrador
+        // Limpiamos los usuarios existentes para evitar duplicados al ejecutar el seeder
+        User::whereIn('email', ['admin@adso.com', 'instructor@adso.com', 'aprendiz@adso.com'])->delete();
+
         User::create([
-            'name' => 'Administrador ADSO',
-            'email' => 'admin@adso.edu.co',
-            'password' => Hash::make('password'),
-            'role' => 'admin',
+            'name'     => 'Administrador ADSO',
+            'email'    => 'admin@adso.com',
+            'role'     => 'admin',
+            'password' => Hash::make('password123'),
         ]);
 
-        // Instructor
         User::create([
-            'name' => 'Instructor ADSO',
-            'email' => 'instructor@adso.edu.co',
-            'password' => Hash::make('password'),
-            'role' => 'instructor',
+            'name'     => 'Instructor ADSO',
+            'email'    => 'instructor@adso.com',
+            'role'     => 'instructor',
+            'password' => Hash::make('password123'),
         ]);
 
-        // Aprendiz
         User::create([
-            'name' => 'Aprendiz ADSO',
-            'email' => 'aprendiz@adso.edu.co',
-            'password' => Hash::make('password'),
-            'role' => 'aprendiz',
+            'name'     => 'Aprendiz ADSO',
+            'email'    => 'aprendiz@adso.com',
+            'role'     => 'aprendiz',
+            'password' => Hash::make('password123'),
         ]);
     }
 }

@@ -18,6 +18,9 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::resource('aprendizes', AprendizController::class);
-});
 
+    Route::middleware('can:manage-users')->group(function () {
+        Route::resource('users', UserController::class)->except(['create', 'store', 'show']);
+});
+});
 require __DIR__.'/auth.php';
