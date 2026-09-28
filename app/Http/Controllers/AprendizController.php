@@ -2,41 +2,42 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreAprendizRequest;
+use App\Http\Requests\UpdateAprendizRequest;
 use App\Models\Aprendiz;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Gate;
 
 class AprendizController extends Controller
 {
-    public function index()
-    {
-        $aprendizes = Aprendiz::paginate(10);
-        return view('aprendizes.index', compact('aprendizes'));
-    }
+    public function index(Request $request)
+{
+    $search = $request->input('search');
+
+    $aprendizes = Aprendiz::query()
+        ->when($search, function ($query, $search) {
+            return $query->where('nombre', 'like', "%{$search}%")
+                ->orWhere('apellido', 'like', "%{$search}%")
+                ->orWhere('documento', 'like', "%{$search}%")
+                ->orWhere('ficha', 'like', "%{$search}%")
+                ->orWhere('email', 'like', "%{$search}%");
+        })
+        ->paginate(10)
+        ->withQueryString();
+
+    return view('aprendizes.index', compact('aprendizes', 'search'));
+}
 
     public function create()
     {
-        // Solo Admin e Instructor pueden acceder al formulario de creación
-        Gate::authorize('manage-aprendizes');
+        $this->authorize('create', Aprendiz::class);
 
         return view('aprendizes.create');
     }
 
-    public function store(Request $request)
+    public function store(StoreAprendizRequest $request)
     {
-        // Solo Admin e Instructor pueden guardar nuevos aprendices
-        Gate::authorize('manage-aprendizes');
-
-        $request->validate([
-            'documento' => 'required|unique:aprendizes,documento',
-            'nombres'   => 'required|string|max:255',
-            'apellidos' => 'required|string|max:255',
-            'email'     => 'required|email|unique:aprendizes,email',
-            'ficha'     => 'required|string|max:20',
-            'estado'    => 'required|string',
-        ]);
-
-        Aprendiz::create($request->all());
+        // La validación y autorización ocurren automáticamente en StoreAprendizRequest
+        Aprendiz::create($request->validated());
 
         return redirect()->route('aprendizes.index')
             ->with('success', 'Aprendiz registrado correctamente.');
@@ -44,32 +45,22 @@ class AprendizController extends Controller
 
     public function show(Aprendiz $aprendiz)
     {
+        $this->authorize('view', $aprendiz);
+
         return view('aprendizes.show', compact('aprendiz'));
     }
 
     public function edit(Aprendiz $aprendiz)
     {
-        // Solo Admin e Instructor pueden acceder a la vista de edición
-        Gate::authorize('manage-aprendizes');
+        $this->authorize('update', $aprendiz);
 
         return view('aprendizes.edit', compact('aprendiz'));
     }
 
-    public function update(Request $request, Aprendiz $aprendiz)
+    public function update(UpdateAprendizRequest $request, Aprendiz $aprendiz)
     {
-        // Solo Admin e Instructor pueden actualizar registros
-        Gate::authorize('manage-aprendizes');
-
-        $request->validate([
-            'documento' => 'required|unique:aprendizes,documento,' . $aprendiz->id,
-            'nombres'   => 'required|string|max:255',
-            'apellidos' => 'required|string|max:255',
-            'email'     => 'required|email|unique:aprendizes,email,' . $aprendiz->id,
-            'ficha'     => 'required|string|max:20',
-            'estado'    => 'required|string',
-        ]);
-
-        $aprendiz->update($request->all());
+        // La validación y autorización ocurren automáticamente en UpdateAprendizRequest
+        $aprendiz->update($request->validated());
 
         return redirect()->route('aprendizes.index')
             ->with('success', 'Aprendiz actualizado correctamente.');
@@ -77,8 +68,7 @@ class AprendizController extends Controller
 
     public function destroy(Aprendiz $aprendiz)
     {
-        // Solo Admin e Instructor pueden eliminar registros
-        Gate::authorize('manage-aprendizes');
+        $this->authorize('delete', $aprendiz);
 
         $aprendiz->delete();
 
