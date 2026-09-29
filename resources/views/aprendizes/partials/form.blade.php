@@ -46,7 +46,7 @@
 <div class="mb-6">
     <x-input-label for="estado" value="Estado del Aprendiz" />
     <select id="estado" name="estado" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
-        <option value="en_formacion" {{ old('estado', $aprendiz->estado ?? '') === 'en_formacion' ? 'selected' : '' }}>En Formación</option>
+        <option value="en_formacion" {{ old('estado', $aprendiz->estado ?? 'en_formacion') === 'en_formacion' ? 'selected' : '' }}>En Formación</option>
         <option value="retirado" {{ old('estado', $aprendiz->estado ?? '') === 'retirado' ? 'selected' : '' }}>Retirado</option>
         <option value="graduado" {{ old('estado', $aprendiz->estado ?? '') === 'graduado' ? 'selected' : '' }}>Graduado</option>
     </select>

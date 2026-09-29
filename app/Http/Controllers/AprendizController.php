@@ -6,30 +6,31 @@ use App\Http\Requests\StoreAprendizRequest;
 use App\Http\Requests\UpdateAprendizRequest;
 use App\Models\Aprendiz;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class AprendizController extends Controller
 {
     public function index(Request $request)
-{
-    $search = $request->input('search');
+    {
+        $search = $request->input('search');
 
-    $aprendizes = Aprendiz::query()
-        ->when($search, function ($query, $search) {
-            return $query->where('nombre', 'like', "%{$search}%")
-                ->orWhere('apellido', 'like', "%{$search}%")
-                ->orWhere('documento', 'like', "%{$search}%")
-                ->orWhere('ficha', 'like', "%{$search}%")
-                ->orWhere('email', 'like', "%{$search}%");
-        })
-        ->paginate(10)
-        ->withQueryString();
+        $aprendizes = Aprendiz::query()
+            ->when($search, function ($query, $search) {
+                return $query->where('nombre', 'like', "%{$search}%")
+                    ->orWhere('apellido', 'like', "%{$search}%")
+                    ->orWhere('documento', 'like', "%{$search}%")
+                    ->orWhere('ficha', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%");
+            })
+            ->paginate(10)
+            ->withQueryString();
 
-    return view('aprendizes.index', compact('aprendizes', 'search'));
-}
+        return view('aprendizes.index', compact('aprendizes', 'search'));
+    }
 
     public function create()
     {
-        $this->authorize('create', Aprendiz::class);
+        Gate::authorize('create', Aprendiz::class);
 
         return view('aprendizes.create');
     }
@@ -45,14 +46,14 @@ class AprendizController extends Controller
 
     public function show(Aprendiz $aprendiz)
     {
-        $this->authorize('view', $aprendiz);
+        Gate::authorize('view', $aprendiz);
 
         return view('aprendizes.show', compact('aprendiz'));
     }
 
     public function edit(Aprendiz $aprendiz)
     {
-        $this->authorize('update', $aprendiz);
+        Gate::authorize('update', $aprendiz);
 
         return view('aprendizes.edit', compact('aprendiz'));
     }
@@ -68,7 +69,7 @@ class AprendizController extends Controller
 
     public function destroy(Aprendiz $aprendiz)
     {
-        $this->authorize('delete', $aprendiz);
+        Gate::authorize('delete', $aprendiz);
 
         $aprendiz->delete();
 
